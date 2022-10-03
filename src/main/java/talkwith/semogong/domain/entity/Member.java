@@ -65,7 +65,7 @@ public class Member extends BaseEntity {
         member.goal = new Goal(6, 30);
         member.role = Role.USER;
         member.state = StudyState.END;
-        member.image = new Image("default", "/images/profile.png");
+        member.image = new Image("Default", "/images/profile.png");
         return member;
     }
 

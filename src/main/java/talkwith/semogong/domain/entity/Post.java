@@ -12,6 +12,7 @@ import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.post.PostEditForm;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,22 +47,29 @@ public class Post extends BaseEntity{
     private Member member;
 
     // 게시글 생성 메서드
-    public static Post create(Member member) {
+    public static Post create(Member member, LocalDateTime createdTime) {
         Post post = new Post();
         post.member = member;
+        // default setting
         post.title = "제목 없음";
-        post.times.add(now().format(ofPattern("HH:mm")));
+        post.introduce = "";
+        post.content = "";
+        post.html = "<br>";
+        post.times.add(createdTime.format(ofPattern("HH:mm")));
         post.state = StudyState.STUDYING;
+        post.image = new Image("Default", "/images/semogong_light.jpg");
         return post;
     }
 
     // 게시글 통합 수정 메서드
     public void edit(PostEditForm form) {
         this.title = form.getTitle();
-        this.introduce = form.getIntroduce();
-        this.content = form.getContent();
-        if (hasText(form.getContent())) this.html = markdownToHTML(form.getContent());
-        else this.html = "\n";
+        if (hasText(form.getIntroduce())) this.introduce = form.getIntroduce();
+        if (hasText(form.getContent())){
+            this.content = form.getContent();
+            this.html = markdownToHTML(form.getContent());
+        }
+
         this.times = form.getTimes();
     }
 

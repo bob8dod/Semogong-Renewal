@@ -1,8 +1,6 @@
 package talkwith.semogong.domain;
 
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import talkwith.semogong.domain.att.DesiredJob;
 import talkwith.semogong.domain.att.Role;
@@ -18,13 +16,14 @@ import talkwith.semogong.domain.entity.Post;
 
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // with no Spring
 public class AllEntityTest {
 
     @Test // Member 생성 및 수정
-    public void memberTest() throws Exception{
+    public void memberTest() throws Exception {
 
         /* 생성 */
         //given (주어진 것들을 통해)
@@ -47,7 +46,7 @@ public class AllEntityTest {
         editForm.setNickname("해돌");
         editForm.setDesiredJob(DesiredJob.Frontend);
         editForm.setIntroduce("안녕하세요");
-        editForm.setLinks(List.of("github.com","github.io"));
+        editForm.setLinks(List.of("github.com", "github.io"));
         //when (이런 기능을 동작했을 때)
         member.edit(editForm);
         //then (이런 결과를 확인할 것)
@@ -61,7 +60,7 @@ public class AllEntityTest {
     }
 
     @Test // Member 팔로우,팔로잉 테스트
-    public void followTest() throws Exception{
+    public void followTest() throws Exception {
         //given (주어진 것들을 통해)
         MemberCreateForm form = new MemberCreateForm();
         form.setLoginId("bob8dod");
@@ -86,7 +85,7 @@ public class AllEntityTest {
     }
 
     @Test // 게시글 생성 및 수정
-    public void postTest() throws Exception{
+    public void postTest() throws Exception {
         /* 생성 */
         //given (주어진 것들을 통해)
         MemberCreateForm form = new MemberCreateForm();
@@ -96,7 +95,7 @@ public class AllEntityTest {
         form.setDesiredJob(DesiredJob.Backend);
         Member member = Member.create(form);
         //when (이런 기능을 동작했을 때)
-        Post post = Post.create(member);
+        Post post = Post.create(member, now());
         //then (이런 결과를 확인할 것)
         assertThat(post.getMember().getName()).isEqualTo("박승일");
         assertThat(post.getTitle()).isEqualTo("제목 없음");
@@ -120,7 +119,7 @@ public class AllEntityTest {
     }
 
     @Test // 댓글 생성 및 수정
-    public void commentTest() throws Exception{
+    public void commentTest() throws Exception {
 
         /* 생성 */
         //given (주어진 것들을 통해)
@@ -131,7 +130,7 @@ public class AllEntityTest {
         form.setDesiredJob(DesiredJob.Backend);
         Member member = Member.create(form);
 
-        Post post = Post.create(member);
+        Post post = Post.create(member, now());
         PostEditForm editForm = new PostEditForm();
         editForm.setTitle("세모공 개발");
         editForm.setContent("Test");
