@@ -2,10 +2,23 @@ package talkwith.semogong.repository.post;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
 import talkwith.semogong.domain.etc.SearchCond;
 
+import java.util.List;
+
 public interface PostRepositoryCustom {
 
-    Page<Post> findBySearch(SearchCond cond, Pageable pageable);
+    /**
+     * 조건에 따른 검색
+     * 조건:
+     *  1. 카테고리 (category -> "All", "Today", "My")
+     *  2. 제목 (title)
+     *  3. 작성자 (name)
+     *  4. 희망 직무 (desiredJob)
+     *  5. 내용 (content)
+     * */
+    Page<Post> findBySearch(SearchCond cond, Member loginMember, Pageable pageable);
+
 }

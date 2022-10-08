@@ -13,6 +13,7 @@ import talkwith.semogong.domain.dto.member.MemberCreateForm;
 import talkwith.semogong.domain.dto.post.PostEditForm;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
+import talkwith.semogong.domain.etc.SearchCond;
 import talkwith.semogong.repository.member.MemberRepository;
 
 import javax.persistence.EntityManager;
@@ -50,9 +51,12 @@ class PostRepositoryTest {
             postRepository.save(post);
             PostEditForm postEditForm = new PostEditForm();
             postEditForm.setTitle("글" + i);
-            postEditForm.setTimes(List.of(now().format(ofPattern("HH:mm"))));
+            postEditForm.setContent("안녕하세요~~ " + i + "번째 글입니다!");
             post.edit(postEditForm);
         }
+
+        em.flush();
+        em.clear();
     }
 
     @Test // 전체 글 조회 with 페이징
@@ -104,7 +108,7 @@ class PostRepositoryTest {
         Optional<Member> member = memberRepository.findOneByName("박승일");
         assertThat(member.isPresent()).isTrue();
         //when (이런 기능을 동작했을 때)
-        Optional<Post> post = postRepository.findFirstByMemberOrderByCreatedDateDesc(member.get());
+//        Optional<Post> post = postRepository.findFirstByMemberOrderByCreatedDateDesc(member.get());
         Optional<Post> postTemp = postRepository.findFirstByMember(member.get(), Sort.by(Sort.Direction.DESC, "createdDate"));
 
         //then (이런 결과를 확인할 것)
@@ -113,12 +117,88 @@ class PostRepositoryTest {
     }
 
     @Test // 검색 조건에 따른 Paging
-    public void postBySearchCondWithPaging() throws Exception{
+    public void postBySearchCondWithPagingAll() throws Exception{
         //given (주어진 것들을 통해)
-
+        SearchCond cond = new SearchCond();
         //when (이런 기능을 동작했을 때)
-
+        Page<Post> posts = postRepository.findBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
-
+        assertThat(posts.getTotalElements()).isEqualTo(100);
     }
+
+    @Test // 검색 조건에 따른 Paging
+    public void postBySearchCondWithPagingToday() throws Exception{
+        //given (주어진 것들을 통해)
+        SearchCond cond = new SearchCond();
+        cond.setCategory("Today");
+        //when (이런 기능을 동작했을 때)
+        Page<Post> posts = postRepository.findBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        //then (이런 결과를 확인할 것)
+        assertThat(posts.getTotalElements()).isEqualTo(100);
+    }
+
+    @Test // 검색 조건에 따른 Paging
+    public void postBySearchCondWithPagingMy() throws Exception{
+
+        MemberCreateForm form = new MemberCreateForm();
+        form.setLoginId("potential1205");
+        form.setPassword("1234");
+        form.setName("이재훈");
+        form.setDesiredJob(DesiredJob.Frontend);
+        Member member = Member.create(form);
+        memberRepository.save(member);
+
+        for (int i = 0; i < 50; i++) {
+            Post post = Post.create(member, now());
+            postRepository.save(post);
+            PostEditForm postEditForm = new PostEditForm();
+            postEditForm.setTitle("글" + i);
+            postEditForm.setContent("안녕하세요~~ " + i + "번째 글입니다!");
+            post.edit(postEditForm);
+        }
+
+        //given (주어진 것들을 통해)
+        SearchCond cond = new SearchCond();
+        cond.setCategory("My");
+        //when (이런 기능을 동작했을 때)
+        Page<Post> posts = postRepository.findBySearch(cond, member, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        //then (이런 결과를 확인할 것)
+        assertThat(posts.getTotalElements()).isEqualTo(50);
+    }
+
+    @Test // 검색 조건에 따른 Paging
+    public void postBySearchCondWithPaging() throws Exception{
+
+        MemberCreateForm form = new MemberCreateForm();
+        form.setLoginId("potential1205");
+        form.setPassword("1234");
+        form.setName("이재훈");
+        form.setDesiredJob(DesiredJob.Frontend);
+        Member member = Member.create(form);
+        memberRepository.save(member);
+
+        for (int i = 0; i < 40; i++) {
+            Post post = Post.create(member, now());
+            postRepository.save(post);
+            PostEditForm postEditForm = new PostEditForm();
+            postEditForm.setTitle("글" + i);
+            postEditForm.setContent("안녕하세요~~ " + i + "번째 글입니다!");
+            post.edit(postEditForm);
+        }
+        em.flush();
+        em.clear();
+
+        //given (주어진 것들을 통해)
+        SearchCond cond = new SearchCond();
+        cond.setTitle("글");
+        cond.setName("이재훈");
+        cond.setDesiredJob(DesiredJob.Frontend);
+        cond.setContent("하세요");
+        //when (이런 기능을 동작했을 때)
+        Page<Post> posts = postRepository.findBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        //then (이런 결과를 확인할 것)
+        assertThat(posts.getTotalElements()).isEqualTo(40);
+    }
+
+
 }
