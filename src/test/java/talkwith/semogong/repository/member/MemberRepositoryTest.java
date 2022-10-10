@@ -4,13 +4,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import talkwith.semogong.domain.att.DesiredJob;
 import talkwith.semogong.domain.att.Role;
 import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.member.MemberCreateForm;
 import talkwith.semogong.domain.dto.member.MemberEditForm;
+import talkwith.semogong.domain.entity.Follow;
 import talkwith.semogong.domain.entity.Member;
+import talkwith.semogong.repository.FollowRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +33,8 @@ class MemberRepositoryTest {
     private EntityManager em;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private FollowRepository followRepository;
 
     @BeforeEach
     public void init() {
@@ -126,6 +134,71 @@ class MemberRepositoryTest {
         assertThat(allByDesiredJob.get(3)).extracting("desiredJob").isEqualTo(DesiredJob.Backend);
         assertThat(all.get(0)).extracting("state").isEqualTo(StudyState.STUDYING);
 
+    }
+
+    @Test // 팔로잉하는 사람 조회
+    public void findFollowing() throws Exception{
+        //given (주어진 것들을 통해)
+        Optional<Member> member1 = memberRepository.findById(1L);
+        assertThat(member1.isPresent()).isTrue();
+        Optional<Member> member2 = memberRepository.findById(2L);
+        assertThat(member2.isPresent()).isTrue();
+        Optional<Member> member3 = memberRepository.findById(3L);
+        assertThat(member3.isPresent()).isTrue();
+        Optional<Member> member4 = memberRepository.findById(4L);
+        assertThat(member4.isPresent()).isTrue();
+
+        Follow follow1 = Follow.create(member2.get(), member1.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+        Follow follow2 = Follow.create(member2.get(), member3.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+        Follow follow3 = Follow.create(member2.get(), member4.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+
+        followRepository.save(follow1);
+        followRepository.save(follow2);
+        followRepository.save(follow3);
+
+        em.flush();
+        em.clear();
+
+        //when (이런 기능을 동작했을 때)
+        Slice<Member> allFollowers = memberRepository.findAllFollowing(member2.get(), PageRequest.of(0, 10));
+
+        //then (이런 결과를 확인할 것)
+        assertThat(allFollowers.getContent().size()).isEqualTo(3);
+    }
+
+    @Test
+    @Commit
+    public void findFollowers() throws Exception{
+        //given (주어진 것들을 통해)
+        Optional<Member> member1 = memberRepository.findById(1L);
+        assertThat(member1.isPresent()).isTrue();
+        Optional<Member> member2 = memberRepository.findById(2L);
+        assertThat(member2.isPresent()).isTrue();
+        Optional<Member> member3 = memberRepository.findById(3L);
+        assertThat(member3.isPresent()).isTrue();
+        Optional<Member> member4 = memberRepository.findById(4L);
+        assertThat(member4.isPresent()).isTrue();
+
+        Follow follow1 = Follow.create(member2.get(), member1.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+        Follow follow2 = Follow.create(member2.get(), member3.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+        Follow follow3 = Follow.create(member3.get(), member1.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+        Follow follow4 = Follow.create(member2.get(), member4.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+        Follow follow5 = Follow.create(member4.get(), member1.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+
+        followRepository.save(follow1);
+        followRepository.save(follow2);
+        followRepository.save(follow3);
+        followRepository.save(follow4);
+        followRepository.save(follow5);
+
+        em.flush();
+        em.clear();
+
+        //when (이런 기능을 동작했을 때)
+        Slice<Member> allFollowers = memberRepository.findAllFollower(member1.get(), PageRequest.of(0, 10));
+
+        //then (이런 결과를 확인할 것)
+        assertThat(allFollowers.getContent().size()).isEqualTo(3);
     }
 
 

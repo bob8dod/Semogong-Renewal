@@ -13,17 +13,17 @@ public class Follow extends BaseEntity{
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "following")
-    private Member following; // 팔로 하고자 하는 사람
+    @JoinColumn(name = "follower")
+    private Member follower; // 팔로를 하는 사람
 
     @ManyToOne
-    @JoinColumn(name = "follower")
-    private Member follower; // 팔로를 당한 사람
+    @JoinColumn(name = "followed")
+    private Member followed; // 팔로 당하는 사람
 
     // 팔로우, 팔로잉 관계 생성 메서드
-    public static Follow create(Member following, Member follower) {
+    public static Follow create(Member follower, Member followed) {
         Follow follow = new Follow();
-        follow.following = following;
+        follow.followed = followed;
         follow.follower = follower;
         return follow;
     }

@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.springframework.util.StringUtils;
 import talkwith.semogong.domain.att.Image;
 import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.post.PostEditForm;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class Post extends BaseEntity{
     private Member member;
 
     // 00시~05시 사이에 작성된 글에 대해 처리하기 위한 Field
-    private LocalDateTime customDate;
+    private LocalDate customDate;
 
     // 게시글 생성 메서드
     public static Post create(Member member, LocalDateTime createdTime) {
@@ -59,9 +59,9 @@ public class Post extends BaseEntity{
         post.content = "";
         post.html = "<br>";
         post.times.add(createdTime.format(ofPattern("HH:mm")));
-        LocalDateTime date = createdTime;
-        // 00 ~ 05 시 사이 글 작성 시 customDate를 이전 날짜의 23:59로 설정
-        if (createdTime.getHour() < 5) date = LocalDateTime.of(createdTime.minusDays(1L).toLocalDate(), LocalTime.of(23,59));
+        LocalDate date = createdTime.toLocalDate();
+        // 00 ~ 05 시 사이 글 작성 시 customDate를 이전 날짜로 설정
+        if (createdTime.getHour() < 5) date = createdTime.minusDays(1L).toLocalDate();
         post.customDate = date;
         post.state = StudyState.STUDYING;
         post.image = new Image("Default", "/images/semogong_light.jpg");

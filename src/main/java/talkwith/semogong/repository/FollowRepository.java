@@ -1,18 +1,14 @@
 package talkwith.semogong.repository;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.JpaRepository;
 import talkwith.semogong.domain.entity.Follow;
+import talkwith.semogong.domain.entity.Member;
 
-import javax.persistence.EntityManager;
+import java.util.List;
 
-@Repository
-@RequiredArgsConstructor
-public class FollowRepository {
 
-    private final EntityManager em;
+public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-    public void save(Follow follow) {
-        em.persist(follow);
-    }
 }

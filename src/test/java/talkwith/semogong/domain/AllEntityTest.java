@@ -80,8 +80,8 @@ public class AllEntityTest {
         Follow follow = Follow.create(member, member2);
 
         //then (이런 결과를 확인할 것)
-        assertThat(follow.getFollowing().getName()).isEqualTo("박승일");
-        assertThat(follow.getFollower().getName()).isEqualTo("이재훈");
+        assertThat(follow.getFollower().getName()).isEqualTo("박승일"); // 팔로 한 사람
+        assertThat(follow.getFollowed().getName()).isEqualTo("이재훈"); // 팔로 당한사람
     }
 
     @Test // 게시글 생성 및 수정

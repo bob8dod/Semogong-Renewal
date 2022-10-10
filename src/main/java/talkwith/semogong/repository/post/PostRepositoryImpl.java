@@ -56,6 +56,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return new PageImpl<>(content, pageable, total);
     }
 
+    @Override
+    public List<Post> findByCustomDateWithMonth(int year, int month) {
+        return qm.selectFrom(post)
+                .where(post.customDate.year().eq(year),
+                        post.customDate.dayOfMonth().eq(month))
+                .fetch();
+    }
+
     /**
      *  1. 카테고리 (category -> "All", "Today", "My")
      *   1) Today
@@ -116,4 +124,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     private BooleanExpression contentEq(String content) {
         return hasText(content) ? post.content.like("%" + content + "%") : null;
     }
+
+
 }
