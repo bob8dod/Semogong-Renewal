@@ -13,7 +13,7 @@ public class Follow extends BaseEntity{
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "follower")
+    @JoinColumn(name = "following")
     private Member following; // 팔로를 하는 사람
 
     @ManyToOne

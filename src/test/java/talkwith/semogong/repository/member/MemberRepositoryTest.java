@@ -16,6 +16,7 @@ import talkwith.semogong.domain.dto.member.MemberCreateForm;
 import talkwith.semogong.domain.dto.member.MemberEditForm;
 import talkwith.semogong.domain.entity.Follow;
 import talkwith.semogong.domain.entity.Member;
+import talkwith.semogong.domain.etc.SearchCond;
 import talkwith.semogong.repository.FollowRepository;
 
 import javax.persistence.EntityManager;
@@ -160,14 +161,14 @@ class MemberRepositoryTest {
         em.clear();
 
         //when (이런 기능을 동작했을 때)
-        Slice<Member> allFollowers = memberRepository.findAllFollowing(member2.get(), PageRequest.of(0, 10));
+        Slice<Member> following = memberRepository.findAllFollowing(member2.get(), PageRequest.of(0, 10));
 
         //then (이런 결과를 확인할 것)
-        assertThat(allFollowers.getContent().size()).isEqualTo(3);
+        assertThat(following.getContent().size()).isEqualTo(3);
+
     }
 
     @Test
-    @Commit
     public void findFollowed() throws Exception{
         //given (주어진 것들을 통해)
         Optional<Member> member1 = memberRepository.findById(1L);
@@ -195,11 +196,49 @@ class MemberRepositoryTest {
         em.clear();
 
         //when (이런 기능을 동작했을 때)
-        Slice<Member> allFollowers = memberRepository.findAllFollowed(member1.get(), PageRequest.of(0, 10));
+        Slice<Member> followers = memberRepository.findAllFollowed(member1.get(), PageRequest.of(0, 10));
 
         //then (이런 결과를 확인할 것)
-        assertThat(allFollowers.getContent().size()).isEqualTo(3);
+        assertThat(followers.getContent().size()).isEqualTo(3);
     }
 
+    @Test
+    public void searchMemberByName() throws Exception{
+        //given (주어진 것들을 통해)
+
+        //when (이런 기능을 동작했을 때)
+        SearchCond cond = new SearchCond();
+        cond.setName("member11");
+        Slice<Member> result = memberRepository.findAllBySearch(cond, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        //then (이런 결과를 확인할 것)
+        assertThat(result.getContent().size()).isEqualTo(1);
+        assertThat(result.getContent().get(0)).extracting("loginId").isEqualTo("bob11dod");
+    }
+
+    @Test
+    public void top5FollowingMember() throws Exception{
+        //given (주어진 것들을 통해)
+        Optional<Member> member1 = memberRepository.findById(1L);
+        assertThat(member1.isPresent()).isTrue();
+        Optional<Member> member2 = memberRepository.findById(2L);
+        assertThat(member2.isPresent()).isTrue();
+        Optional<Member> member3 = memberRepository.findById(3L);
+        assertThat(member3.isPresent()).isTrue();
+        Optional<Member> member4 = memberRepository.findById(4L);
+        assertThat(member4.isPresent()).isTrue();
+
+        Follow follow1 = Follow.create(member2.get(), member1.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+        Follow follow2 = Follow.create(member2.get(), member3.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+        Follow follow3 = Follow.create(member2.get(), member4.get()); // 팔로 하고자하는 사람, 팔로 당하는 사람
+
+        followRepository.save(follow1);
+        followRepository.save(follow2);
+        followRepository.save(follow3);
+
+        //when (이런 기능을 동작했을 때)
+        List<Member> result = memberRepository.findTop5FollowingBySorting(member2.get());
+        //then (이런 결과를 확인할 것)
+        assertThat(result.size()).isEqualTo(3);
+    }
 
 }

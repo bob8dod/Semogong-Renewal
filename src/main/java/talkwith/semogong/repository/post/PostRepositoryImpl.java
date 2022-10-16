@@ -30,7 +30,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory qm;
 
     @Override // 조건에 따른 검색
-    public Page<Post> findBySearch(SearchCond cond, Member loginMember, Pageable pageable) {
+    public Page<Post> findAllBySearch(SearchCond cond, Member loginMember, Pageable pageable) {
         List<Post> content = qm.selectFrom(post)
                 .join(post.member, member)
                 .where(category(cond.getCategory(), loginMember),
@@ -58,7 +58,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public List<Post> findByCustomDateWithMonth(int year, int month) {
+    public List<Post> findAllByCustomDateWithMonth(int year, int month) {
         return qm.selectFrom(post)
                 .where(post.customDate.year().eq(year),
                         post.customDate.month().eq(month))

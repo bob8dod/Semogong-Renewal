@@ -121,7 +121,7 @@ class PostRepositoryTest {
         //given (주어진 것들을 통해)
         SearchCond cond = new SearchCond();
         //when (이런 기능을 동작했을 때)
-        Page<Post> posts = postRepository.findBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<Post> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
         assertThat(posts.getTotalElements()).isEqualTo(100);
     }
@@ -132,7 +132,7 @@ class PostRepositoryTest {
         SearchCond cond = new SearchCond();
         cond.setCategory("Today");
         //when (이런 기능을 동작했을 때)
-        Page<Post> posts = postRepository.findBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<Post> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
         assertThat(posts.getTotalElements()).isEqualTo(100);
     }
@@ -161,7 +161,7 @@ class PostRepositoryTest {
         SearchCond cond = new SearchCond();
         cond.setCategory("My");
         //when (이런 기능을 동작했을 때)
-        Page<Post> posts = postRepository.findBySearch(cond, member, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<Post> posts = postRepository.findAllBySearch(cond, member, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
         assertThat(posts.getTotalElements()).isEqualTo(50);
     }
@@ -195,7 +195,7 @@ class PostRepositoryTest {
         cond.setDesiredJob(DesiredJob.Frontend);
         cond.setContent("하세요");
         //when (이런 기능을 동작했을 때)
-        Page<Post> posts = postRepository.findBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<Post> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
         assertThat(posts.getTotalElements()).isEqualTo(40);
     }
@@ -218,7 +218,7 @@ class PostRepositoryTest {
         //given (주어진 것들을 통해)
 
         //when (이런 기능을 동작했을 때)
-        List<Post> result = postRepository.findByCustomDateWithMonth(2022,10);
+        List<Post> result = postRepository.findAllByCustomDateWithMonth(2022,10);
         //then (이런 결과를 확인할 것)
         assertThat(result.size()).isEqualTo(100);
 

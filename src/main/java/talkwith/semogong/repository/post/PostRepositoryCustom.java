@@ -21,12 +21,12 @@ public interface PostRepositoryCustom {
      *  5. 내용 (content)
      * */
     @EntityGraph(attributePaths = {"member"})
-    Page<Post> findBySearch(SearchCond cond, Member loginMember, Pageable pageable);
+    Page<Post> findAllBySearch(SearchCond cond, Member loginMember, Pageable pageable);
 
     /**
      * 지정 달의 글 조회
      * */
     @EntityGraph(attributePaths = {"member"})
-    List<Post> findByCustomDateWithMonth(int year, int month);
+    List<Post> findAllByCustomDateWithMonth(int year, int month);
 
 }
