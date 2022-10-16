@@ -168,7 +168,7 @@ class MemberRepositoryTest {
 
     @Test
     @Commit
-    public void findFollowers() throws Exception{
+    public void findFollowed() throws Exception{
         //given (주어진 것들을 통해)
         Optional<Member> member1 = memberRepository.findById(1L);
         assertThat(member1.isPresent()).isTrue();
@@ -195,7 +195,7 @@ class MemberRepositoryTest {
         em.clear();
 
         //when (이런 기능을 동작했을 때)
-        Slice<Member> allFollowers = memberRepository.findAllFollower(member1.get(), PageRequest.of(0, 10));
+        Slice<Member> allFollowers = memberRepository.findAllFollowed(member1.get(), PageRequest.of(0, 10));
 
         //then (이런 결과를 확인할 것)
         assertThat(allFollowers.getContent().size()).isEqualTo(3);

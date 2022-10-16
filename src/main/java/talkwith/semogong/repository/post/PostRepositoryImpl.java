@@ -33,7 +33,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public Page<Post> findBySearch(SearchCond cond, Member loginMember, Pageable pageable) {
         List<Post> content = qm.selectFrom(post)
                 .join(post.member, member)
-                .where(titleEq(cond.getTitle()),
+                .where(category(cond.getCategory(), loginMember),
+                        titleEq(cond.getTitle()),
                         nameEq(cond.getName()),
                         jobEq(cond.getDesiredJob()),
                         contentEq(cond.getContent()))
@@ -60,7 +61,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     public List<Post> findByCustomDateWithMonth(int year, int month) {
         return qm.selectFrom(post)
                 .where(post.customDate.year().eq(year),
-                        post.customDate.dayOfMonth().eq(month))
+                        post.customDate.month().eq(month))
                 .fetch();
     }
 

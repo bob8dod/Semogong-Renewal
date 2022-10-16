@@ -14,7 +14,7 @@ public class Follow extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "follower")
-    private Member follower; // 팔로를 하는 사람
+    private Member following; // 팔로를 하는 사람
 
     @ManyToOne
     @JoinColumn(name = "followed")
@@ -24,7 +24,7 @@ public class Follow extends BaseEntity{
     public static Follow create(Member follower, Member followed) {
         Follow follow = new Follow();
         follow.followed = followed;
-        follow.follower = follower;
+        follow.following = follower;
         return follow;
     }
 }

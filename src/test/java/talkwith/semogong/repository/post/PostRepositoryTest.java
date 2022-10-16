@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -206,10 +205,10 @@ class PostRepositoryTest {
         //given (주어진 것들을 통해)
 
         //when (이런 기능을 동작했을 때)
-        List<Post> result = postRepository.findAllByCustomDateBetween(LocalDate.of(2022, 10, 10), LocalDate.of(2022, 10, 10));
+        List<Post> result = postRepository.findAllByCustomDateBetween(LocalDate.of(2022, 10, 10), LocalDate.now());
         //then (이런 결과를 확인할 것)
         for (Post post : result) {
-            System.out.println("post = 1. " + post.getCreatedDate() + " 2. " + post.getCustomDate());
+            System.out.println("post.getCustomDate() = " + post.getCustomDate());
         }
         assertThat(result.size()).isEqualTo(100);
     }
@@ -221,9 +220,6 @@ class PostRepositoryTest {
         //when (이런 기능을 동작했을 때)
         List<Post> result = postRepository.findByCustomDateWithMonth(2022,10);
         //then (이런 결과를 확인할 것)
-        for (Post post : result) {
-            System.out.println("post = 1. " + post.getCreatedDate() + " 2. " + post.getCustomDate());
-        }
         assertThat(result.size()).isEqualTo(100);
 
     }

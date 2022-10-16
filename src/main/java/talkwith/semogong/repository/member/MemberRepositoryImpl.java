@@ -36,7 +36,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         List<Member> content = qm.select(follow.followed)
                 .from(follow)
                 .join(follow.followed, member)
-                .where(follow.follower.eq(follower))
+                .where(follow.following.eq(follower))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(rankPath.asc())
@@ -44,7 +44,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
         Long total = qm.select(follow.count())
                 .from(follow)
-                .where(follow.follower.eq(follower))
+                .where(follow.following.eq(follower))
                 .fetchOne();
 
         if (total == null) return new PageImpl<>(content, pageable, 0);
@@ -53,11 +53,11 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public Slice<Member> findAllFollower(Member followed, Pageable pageable) {
+    public Slice<Member> findAllFollowed(Member followed, Pageable pageable) {
 
-        List<Member> content = qm.select(follow.follower)
+        List<Member> content = qm.select(follow.following)
                 .from(follow)
-                .join(follow.follower, member)
+                .join(follow.following, member)
                 .where(follow.followed.eq(followed))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

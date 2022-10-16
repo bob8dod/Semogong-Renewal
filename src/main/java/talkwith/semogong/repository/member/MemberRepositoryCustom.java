@@ -11,8 +11,8 @@ public interface MemberRepositoryCustom {
     List<Member> findAllWithSorting();
 
     // 현재 Member가 팔로잉 하는 Member List
-    Slice<Member> findAllFollowing(Member follower, Pageable pageable);
+    Slice<Member> findAllFollowing(Member following, Pageable pageable);
 
     // 현재 Member를 팔로잉 하는 Member List
-    Slice<Member> findAllFollower(Member followed, Pageable pageable);
+    Slice<Member> findAllFollowed(Member followed, Pageable pageable);
 }
