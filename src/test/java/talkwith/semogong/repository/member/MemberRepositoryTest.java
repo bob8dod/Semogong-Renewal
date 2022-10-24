@@ -125,7 +125,7 @@ class MemberRepositoryTest {
         List<Member> parkMembers = memberRepository.findAllByName("박승일");
         Optional<Member> bob20dod = memberRepository.findOneByLoginId("bob20dod");
         List<Member> allByDesiredJob = memberRepository.findAllByDesiredJob(DesiredJob.Backend);
-        List<Member> all = memberRepository.findAllWithSorting();
+        Slice<Member> all = memberRepository.findAllWithSorting(PageRequest.of(0,16));
 
         //then (이런 결과를 확인할 것)
         assertThat(member20.isPresent()).isTrue();
@@ -133,7 +133,7 @@ class MemberRepositoryTest {
         assertThat(member20.get().getLoginId()).isEqualTo(bob20dod.get().getLoginId());
         assertThat(parkMembers).extracting("name").containsExactly("박승일", "박승일");
         assertThat(allByDesiredJob.get(3)).extracting("desiredJob").isEqualTo(DesiredJob.Backend);
-        assertThat(all.get(0)).extracting("state").isEqualTo(StudyState.STUDYING);
+        assertThat(all.getContent().get(0)).extracting("state").isEqualTo(StudyState.STUDYING);
 
     }
 

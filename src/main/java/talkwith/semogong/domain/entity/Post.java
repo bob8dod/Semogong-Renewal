@@ -68,6 +68,11 @@ public class Post extends BaseEntity{
         return post;
     }
 
+    // 존재하지 않는 게시글 반환
+    public static Post noPost() {
+        return new Post();
+    }
+
     // 게시글 통합 수정 메서드
     public void edit(PostEditForm form) {
         this.title = form.getTitle();
@@ -83,7 +88,9 @@ public class Post extends BaseEntity{
     // 게시글 필드 수정 메서드
     public void editImage(Image image) {this.image = image;}
     public void editState(StudyState state) {this.state = state;}
-    public void addTime(String time) {this.times.add(time);}
+    public void addTime(LocalDateTime time) {
+        this.times.add(time.format(ofPattern("HH:mm")));
+    }
 
     private String markdownToHTML(String markdown) {
         Node document = Parser.builder().build().parse(markdown);

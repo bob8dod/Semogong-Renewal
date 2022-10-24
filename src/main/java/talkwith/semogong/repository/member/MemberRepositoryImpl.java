@@ -34,8 +34,19 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
             .otherwise(4);
 
     @Override
-    public List<Member> findAllWithSorting() {
-        return qm.selectFrom(member).orderBy(rankPath.asc()).fetch();
+    public Slice<Member> findAllWithSorting(Pageable pageable) {
+        List<Member> content = qm.selectFrom(member)
+                .orderBy(rankPath.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = qm.select(member.count())
+                .from(member)
+                .fetchOne();
+
+        if (total == null) return new PageImpl<>(content, pageable, 0);
+        return new PageImpl<>(content, pageable, total);
     }
 
     @Override

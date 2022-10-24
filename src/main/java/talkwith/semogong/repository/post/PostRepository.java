@@ -20,16 +20,19 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     @EntityGraph(attributePaths = {"member"})
     Page<Post> findAll(Pageable pageable); // 전체 글 조회
 
+    /*    // Member의 최신 글 조회
+    @EntityGraph(attributePaths = {"member"})
+    Optional<Post> findFirstByMember(Member member, Sort sort);*/
+
     // Member의 최신 글 조회
     @EntityGraph(attributePaths = {"member"})
-    Optional<Post> findFirstByMember(Member member, Sort sort);
     Optional<Post> findFirstByMemberOrderByCreatedDateDesc(Member member);
 
     // Member의 전체 글 조회
     @EntityGraph(attributePaths = {"member"})
     Page<Post> findAllByMember(Member member, Pageable pageable);
 
-    // 지정 날짜 사이의 글 조회
+    // 지정 날짜 사이의 글 조회 (수정 필요)
     @EntityGraph(attributePaths = {"member"})
     List<Post> findAllByCustomDateBetween(LocalDate from, LocalDate to);
 

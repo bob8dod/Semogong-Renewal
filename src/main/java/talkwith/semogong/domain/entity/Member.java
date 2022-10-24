@@ -69,6 +69,11 @@ public class Member extends BaseEntity {
         return member;
     }
 
+    // 존재하지 않는 멤버 반환
+    public static Member noMember() {
+        return new Member();
+    }
+
     // 멤버 통합 수정 메서드
     public void edit(MemberEditForm form) {
         this.name = form.getName();

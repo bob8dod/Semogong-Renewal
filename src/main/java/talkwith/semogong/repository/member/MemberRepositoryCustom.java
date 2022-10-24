@@ -10,7 +10,7 @@ import java.util.List;
 public interface MemberRepositoryCustom {
 
     // 모든 Member 정렬 조회
-    List<Member> findAllWithSorting();
+    Slice<Member> findAllWithSorting(Pageable pageable);
 
     // 현재 Member가 팔로잉 하는 Member List
     Slice<Member> findAllFollowing(Member member, Pageable pageable);
