@@ -27,6 +27,6 @@ public interface PostRepositoryCustom {
      * 지정 달의 글 조회
      * */
     @EntityGraph(attributePaths = {"member"})
-    List<Post> findAllByCustomDateWithMonth(int year, int month);
+    List<Post> findAllByCustomDateWithMonth(Member member, int year, int month);
 
 }

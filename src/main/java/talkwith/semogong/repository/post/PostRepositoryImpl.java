@@ -58,10 +58,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public List<Post> findAllByCustomDateWithMonth(int year, int month) {
+    public List<Post> findAllByCustomDateWithMonth(Member member, int year, int month) {
         return qm.selectFrom(post)
                 .where(post.customDate.year().eq(year),
-                        post.customDate.month().eq(month))
+                        post.customDate.month().eq(month),
+                        post.member.eq(member))
                 .fetch();
     }
 

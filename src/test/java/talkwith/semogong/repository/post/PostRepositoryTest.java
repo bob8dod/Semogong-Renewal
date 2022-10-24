@@ -109,7 +109,7 @@ class PostRepositoryTest {
         assertThat(member.isPresent()).isTrue();
         //when (이런 기능을 동작했을 때)
 //        Optional<Post> post = postRepository.findFirstByMemberOrderByCreatedDateDesc(member.get());
-        Optional<Post> postTemp = postRepository.findFirstByMember(member.get(), Sort.by(Sort.Direction.DESC, "createdDate"));
+        Optional<Post> postTemp = postRepository.findFirstByMemberOrderByCreatedDateDesc(member.get());
 
         //then (이런 결과를 확인할 것)
         assertThat(postTemp.isPresent()).isTrue();
@@ -203,9 +203,9 @@ class PostRepositoryTest {
     @Test
     public void postCustomDateTestBetween() throws Exception{
         //given (주어진 것들을 통해)
-
+        Member member = memberRepository.findById(1L).orElse(Member.noMember());
         //when (이런 기능을 동작했을 때)
-        List<Post> result = postRepository.findAllByCustomDateBetween(LocalDate.of(2022, 10, 10), LocalDate.now());
+        List<Post> result = postRepository.findAllByMemberAndCustomDateBetween(member, LocalDate.of(2022, 10, 10), LocalDate.now());
         //then (이런 결과를 확인할 것)
         for (Post post : result) {
             System.out.println("post.getCustomDate() = " + post.getCustomDate());
@@ -216,12 +216,11 @@ class PostRepositoryTest {
     @Test
     public void postCustomDateTest() throws Exception{
         //given (주어진 것들을 통해)
-
+        Member member = memberRepository.findById(1L).orElse(Member.noMember());
         //when (이런 기능을 동작했을 때)
-        List<Post> result = postRepository.findAllByCustomDateWithMonth(2022,10);
+        List<Post> result = postRepository.findAllByCustomDateWithMonth(member,2022,10);
         //then (이런 결과를 확인할 것)
         assertThat(result.size()).isEqualTo(100);
-
     }
 
 

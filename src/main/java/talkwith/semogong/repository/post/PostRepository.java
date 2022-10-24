@@ -32,9 +32,9 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     @EntityGraph(attributePaths = {"member"})
     Page<Post> findAllByMember(Member member, Pageable pageable);
 
-    // 지정 날짜 사이의 글 조회 (수정 필요)
+    // 지정 날짜 사이의 글 조회
     @EntityGraph(attributePaths = {"member"})
-    List<Post> findAllByCustomDateBetween(LocalDate from, LocalDate to);
+    List<Post> findAllByMemberAndCustomDateBetween(Member member, LocalDate from, LocalDate to);
 
 
 }

@@ -14,6 +14,7 @@ import talkwith.semogong.domain.entity.Post;
 import talkwith.semogong.repository.member.MemberRepository;
 import talkwith.semogong.repository.post.PostRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -54,10 +55,18 @@ public class PostService {
     }
 
     // member의 (최근) 일주일 간의 게시글 조회
-/*    @Transactional(readOnly = true)
-    public List<Post> findWeekPost() {
+    @Transactional(readOnly = true)
+    public List<Post> findWeekPost(Long memberId, LocalDate from,LocalDate to) {
+        Member member = memberRepository.findById(memberId).orElse(Member.noMember());
+        return postRepository.findAllByMemberAndCustomDateBetween(member, from, to);
+    }
 
-    }*/
+    // member 한달 게시글 조회
+    @Transactional(readOnly = true)
+    public List<Post> findMonthPost(Long memberId, int year, int month) {
+        Member member = memberRepository.findById(memberId).orElse(Member.noMember());
+        return postRepository.findAllByCustomDateWithMonth(member, year, month);
+    }
 
     // 게시글 수정
     public void edit(Long id, PostEditForm editForm) {
@@ -78,6 +87,7 @@ public class PostService {
         post.editState(state);
     }
 
+    //
 
 
 }
