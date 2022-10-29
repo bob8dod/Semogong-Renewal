@@ -9,6 +9,7 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import talkwith.semogong.domain.att.Image;
 import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.post.PostEditForm;
+import talkwith.semogong.domain.etc.CustomLocalDate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ public class Post extends BaseEntity{
     private String html;
     @ElementCollection
     private List<String> times = new ArrayList<>();
+    private long totalTime;
     @Embedded
     private Image image;
 
@@ -59,10 +61,10 @@ public class Post extends BaseEntity{
         post.content = "";
         post.html = "<br>";
         post.times.add(createdTime.format(ofPattern("HH:mm")));
+        post.totalTime = 0;
         LocalDate date = createdTime.toLocalDate();
         // 00 ~ 05 시 사이 글 작성 시 customDate를 이전 날짜로 설정
-        if (createdTime.getHour() < 5) date = createdTime.minusDays(1L).toLocalDate();
-        post.customDate = date;
+        post.customDate = CustomLocalDate.now();
         post.state = StudyState.STUDYING;
         post.image = new Image("Default", "/images/semogong_light.jpg");
         return post;
@@ -90,6 +92,9 @@ public class Post extends BaseEntity{
     public void editState(StudyState state) {this.state = state;}
     public void addTime(LocalDateTime time) {
         this.times.add(time.format(ofPattern("HH:mm")));
+    }
+    public void editTotalTime(long totalTime) {
+        this.totalTime = totalTime;
     }
 
     private String markdownToHTML(String markdown) {

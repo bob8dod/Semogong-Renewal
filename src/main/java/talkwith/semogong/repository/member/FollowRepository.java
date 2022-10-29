@@ -1,4 +1,4 @@
-package talkwith.semogong.repository;
+package talkwith.semogong.repository.member;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

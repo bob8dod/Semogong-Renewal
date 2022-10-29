@@ -37,6 +37,10 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role; //권한
 
+    //Tier
+    private Tier tier;
+    private long totalTime;
+
     // additional information
     @Enumerated(EnumType.STRING)
     private StudyState state;

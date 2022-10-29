@@ -11,6 +11,8 @@ import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.post.PostEditForm;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
+import talkwith.semogong.domain.etc.CustomLocalDate;
+import talkwith.semogong.domain.etc.SearchCond;
 import talkwith.semogong.repository.member.MemberRepository;
 import talkwith.semogong.repository.post.PostRepository;
 
@@ -47,11 +49,21 @@ public class PostService {
         return postRepository.findAll(pageRequest);
     }
 
+    // 전체 member의 오늘 게시글 조회
+    @Transactional(readOnly = true)
+    public List<Post> findAllToday() {
+        return postRepository.findAllByCustomDateOrderByTotalTimeDesc(CustomLocalDate.now());
+    }
+
     // member 최근 게시글 조회
     @Transactional(readOnly = true)
-    public Post findRecentPost(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElse(Member.noMember());
-        return postRepository.findFirstByMemberOrderByCreatedDateDesc(member).orElse(Post.noPost());
+    public Post findTodayPost(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if (member != null) {
+            return postRepository.findFirstByMemberAndCustomDate(member, CustomLocalDate.now()).orElse(null);
+        } else {
+            return null;
+        }
     }
 
     // member의 (최근) 일주일 간의 게시글 조회
@@ -68,6 +80,12 @@ public class PostService {
         return postRepository.findAllByCustomDateWithMonth(member, year, month);
     }
 
+    //
+    @Transactional(readOnly = true)
+    public Page<Post> findBySearch(SearchCond cond, Member loginMember, int page) {
+        return postRepository.findAllBySearch(cond, loginMember, PageCond.getPostPageRequest(page));
+    }
+
     // 게시글 수정
     public void edit(Long id, PostEditForm editForm) {
         Post post = postRepository.findById(id).orElse(Post.noPost());
@@ -77,7 +95,7 @@ public class PostService {
     // 게시글 시간 추가
     public void addTime(Long memberId) {
         Member member = memberRepository.findById(memberId).orElse(Member.noMember());
-        Post post = postRepository.findFirstByMemberOrderByCreatedDateDesc(member).orElse(Post.noPost());
+        Post post = postRepository.findFirstByMemberAndCustomDate(member, CustomLocalDate.now()).orElse(Post.noPost());
         post.addTime(now());
     }
 
@@ -87,7 +105,7 @@ public class PostService {
         post.editState(state);
     }
 
-    //
-
-
+    public void deletePost(Post post) {
+        postRepository.delete(post);
+    }
 }

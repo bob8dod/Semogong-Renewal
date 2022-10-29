@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import talkwith.semogong.domain.att.DesiredJob;
 import talkwith.semogong.domain.att.Role;
@@ -17,7 +16,6 @@ import talkwith.semogong.domain.dto.member.MemberEditForm;
 import talkwith.semogong.domain.entity.Follow;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.etc.SearchCond;
-import talkwith.semogong.repository.FollowRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

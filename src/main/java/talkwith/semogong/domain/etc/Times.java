@@ -12,12 +12,19 @@ import java.util.List;
 @NoArgsConstructor
 public class Times {
 
-    private int hour;
-    private int min;
+    private long hour;
+    private long min;
 
-    public Times(int total) {
+    public Times(long total) {
         this.hour = total / 60;
         this.min = total % 60;
+    }
+
+    public long timesToLong() {
+        long result = 0;
+        result += this.hour*60;
+        result += this.min;
+        return result;
     }
 
     // 한 Post의 공부시간 구하기 (오늘 이전의 post들은 모두 End인 상태라고 가정 -> 5시 자동 종료)

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
 
@@ -26,7 +27,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
 
     // Member의 최신 글 조회
     @EntityGraph(attributePaths = {"member"})
-    Optional<Post> findFirstByMemberOrderByCreatedDateDesc(Member member);
+    Optional<Post> findFirstByMemberAndCustomDate(Member member, LocalDate date);
 
     // Member의 전체 글 조회
     @EntityGraph(attributePaths = {"member"})
@@ -36,5 +37,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     @EntityGraph(attributePaths = {"member"})
     List<Post> findAllByMemberAndCustomDateBetween(Member member, LocalDate from, LocalDate to);
 
-
+    @EntityGraph(attributePaths = {"member"})
+    List<Post> findAllByCustomDateOrderByTotalTimeDesc(LocalDate date);
 }

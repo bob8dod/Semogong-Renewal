@@ -9,10 +9,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import talkwith.semogong.domain.att.DesiredJob;
+import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.member.MemberCreateForm;
 import talkwith.semogong.domain.dto.post.PostEditForm;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
+import talkwith.semogong.domain.etc.CustomLocalDate;
 import talkwith.semogong.domain.etc.SearchCond;
 import talkwith.semogong.repository.member.MemberRepository;
 
@@ -109,7 +111,7 @@ class PostRepositoryTest {
         assertThat(member.isPresent()).isTrue();
         //when (이런 기능을 동작했을 때)
 //        Optional<Post> post = postRepository.findFirstByMemberOrderByCreatedDateDesc(member.get());
-        Optional<Post> postTemp = postRepository.findFirstByMemberOrderByCreatedDateDesc(member.get());
+        Optional<Post> postTemp = postRepository.findFirstByMemberAndStateAndCustomDate(member.get(), StudyState.STUDYING, CustomLocalDate.now());
 
         //then (이런 결과를 확인할 것)
         assertThat(postTemp.isPresent()).isTrue();
@@ -219,6 +221,16 @@ class PostRepositoryTest {
         Member member = memberRepository.findById(1L).orElse(Member.noMember());
         //when (이런 기능을 동작했을 때)
         List<Post> result = postRepository.findAllByCustomDateWithMonth(member,2022,10);
+        //then (이런 결과를 확인할 것)
+        assertThat(result.size()).isEqualTo(100);
+    }
+
+    @Test
+    public void postCustomDateTestOrderByTotalTime() throws Exception{
+        //given (주어진 것들을 통해)
+
+        //when (이런 기능을 동작했을 때)
+        List<Post> result = postRepository.findAllByCustomDateOrderByTotalTimeDesc(LocalDate.now());
         //then (이런 결과를 확인할 것)
         assertThat(result.size()).isEqualTo(100);
     }

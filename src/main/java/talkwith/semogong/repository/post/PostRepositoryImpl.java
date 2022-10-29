@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import talkwith.semogong.domain.att.DesiredJob;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
+import talkwith.semogong.domain.etc.CustomLocalDate;
 import talkwith.semogong.domain.etc.SearchCond;
 
 import java.time.LocalDate;
@@ -83,11 +84,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         if (!hasText(category)) { // 오류 방지
             return null;
         } else if (category.equals(TODAY)) { // 카테고리 'Today'에서 검색
-            int hour = now().getHour();
-            LocalDate localDate = now().toLocalDate(); // today
-            if (hour < 5) localDate = now().minusDays(1L).toLocalDate();// yesterday
-            LocalDateTime date = LocalDateTime.of(localDate, LocalTime.of(5,0,0));
-            return post.createdDate.goe(date);
+            LocalDate date = CustomLocalDate.now();
+            return post.customDate.eq(date);
         } else if (category.equals(MY)) { // 카테고리 'My'에서 검색
             return post.member.eq(loginMember);
         } else { // All
