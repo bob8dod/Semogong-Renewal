@@ -17,7 +17,9 @@ import talkwith.semogong.repository.member.MemberRepository;
 import talkwith.semogong.repository.post.PostRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
 
@@ -38,8 +40,8 @@ public class PostService {
 
     // id를 통한 게시글 단건 조회
     @Transactional(readOnly = true)
-    public Post findOne(Long id) {
-        return postRepository.findById(id).orElse(Post.noPost());
+    public Optional<Post> findOne(Long id) {
+        return postRepository.findById(id);
     }
 
     // 게시글 전체 조회
@@ -55,32 +57,43 @@ public class PostService {
         return postRepository.findAllByCustomDateOrderByTotalTimeDesc(CustomLocalDate.now());
     }
 
-    // member 최근 게시글 조회
+    // member 최근(오늘) 게시글 조회
     @Transactional(readOnly = true)
-    public Post findTodayPost(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElse(null);
-        if (member != null) {
-            return postRepository.findFirstByMemberAndCustomDate(member, CustomLocalDate.now()).orElse(null);
+    public Optional<Post> findTodayPost(Long memberId) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+            return postRepository.findFirstByMemberAndCustomDate(member, CustomLocalDate.now());
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
     // member의 (최근) 일주일 간의 게시글 조회
     @Transactional(readOnly = true)
-    public List<Post> findWeekPost(Long memberId, LocalDate from,LocalDate to) {
-        Member member = memberRepository.findById(memberId).orElse(Member.noMember());
-        return postRepository.findAllByMemberAndCustomDateBetween(member, from, to);
+    public List<Post> findWeekPost(Long memberId, LocalDate from, LocalDate to) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+            return postRepository.findAllByMemberAndCustomDateBetween(member, from, to);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     // member 한달 게시글 조회
     @Transactional(readOnly = true)
     public List<Post> findMonthPost(Long memberId, int year, int month) {
-        Member member = memberRepository.findById(memberId).orElse(Member.noMember());
-        return postRepository.findAllByCustomDateWithMonth(member, year, month);
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+            return postRepository.findAllByCustomDateWithMonth(member, year, month);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
-    //
+    // 검색조건에 따른 게시글 조회
     @Transactional(readOnly = true)
     public Page<Post> findBySearch(SearchCond cond, Member loginMember, int page) {
         return postRepository.findAllBySearch(cond, loginMember, PageCond.getPostPageRequest(page));
@@ -105,6 +118,7 @@ public class PostService {
         post.editState(state);
     }
 
+    // 게시글 삭제
     public void deletePost(Post post) {
         postRepository.delete(post);
     }
