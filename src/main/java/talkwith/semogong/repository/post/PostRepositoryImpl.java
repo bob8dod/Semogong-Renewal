@@ -1,5 +1,6 @@
 package talkwith.semogong.repository.post;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import talkwith.semogong.domain.att.DesiredJob;
+import talkwith.semogong.domain.dto.post.PostViewDto;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
 import talkwith.semogong.domain.etc.CustomLocalDate;
@@ -19,20 +21,23 @@ import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.util.StringUtils.hasText;
+import static talkwith.semogong.config.CategoryConst.MY;
+import static talkwith.semogong.config.CategoryConst.TODAY;
 import static talkwith.semogong.domain.entity.QMember.member;
 import static talkwith.semogong.domain.entity.QPost.post;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
 
-    static final String MY = "My";
-    static final String TODAY = "Today";
-
     private final JPAQueryFactory qm;
 
     @Override // 조건에 따른 검색
-    public Page<Post> findAllBySearch(SearchCond cond, Member loginMember, Pageable pageable) {
-        List<Post> content = qm.selectFrom(post)
+    public Page<PostViewDto> findAllBySearch(SearchCond cond, Member loginMember, Pageable pageable) {
+        List<PostViewDto> content = qm.select(Projections.constructor(
+                        PostViewDto.class,
+                        post
+                ))
+                .from(post)
                 .join(post.member, member)
                 .where(category(cond.getCategory(), loginMember),
                         titleEq(cond.getTitle()),
@@ -59,8 +64,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public List<Post> findAllByCustomDateWithMonth(Member member, int year, int month) {
-        return qm.selectFrom(post)
+    public List<PostViewDto> findAllByCustomDateWithMonth(Member member, int year, int month) {
+        return qm.select(Projections.constructor(
+                    PostViewDto.class, post
+                ))
+                .from(post)
                 .where(post.customDate.year().eq(year),
                         post.customDate.month().eq(month),
                         post.member.eq(member))

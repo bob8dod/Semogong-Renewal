@@ -12,6 +12,7 @@ import talkwith.semogong.domain.att.DesiredJob;
 import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.member.MemberCreateForm;
 import talkwith.semogong.domain.dto.post.PostEditForm;
+import talkwith.semogong.domain.dto.post.PostViewDto;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
 import talkwith.semogong.domain.etc.CustomLocalDate;
@@ -111,7 +112,7 @@ class PostRepositoryTest {
         assertThat(member.isPresent()).isTrue();
         //when (이런 기능을 동작했을 때)
 //        Optional<Post> post = postRepository.findFirstByMemberOrderByCreatedDateDesc(member.get());
-        Optional<Post> postTemp = postRepository.findFirstByMemberAndStateAndCustomDate(member.get(), StudyState.STUDYING, CustomLocalDate.now());
+        Optional<Post> postTemp = postRepository.findFirstByMemberAndCustomDate(member.get(), CustomLocalDate.now());
 
         //then (이런 결과를 확인할 것)
         assertThat(postTemp.isPresent()).isTrue();
@@ -123,7 +124,7 @@ class PostRepositoryTest {
         //given (주어진 것들을 통해)
         SearchCond cond = new SearchCond();
         //when (이런 기능을 동작했을 때)
-        Page<Post> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<PostViewDto> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
         assertThat(posts.getTotalElements()).isEqualTo(100);
     }
@@ -134,7 +135,7 @@ class PostRepositoryTest {
         SearchCond cond = new SearchCond();
         cond.setCategory("Today");
         //when (이런 기능을 동작했을 때)
-        Page<Post> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<PostViewDto> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
         assertThat(posts.getTotalElements()).isEqualTo(100);
     }
@@ -163,7 +164,7 @@ class PostRepositoryTest {
         SearchCond cond = new SearchCond();
         cond.setCategory("My");
         //when (이런 기능을 동작했을 때)
-        Page<Post> posts = postRepository.findAllBySearch(cond, member, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<PostViewDto> posts = postRepository.findAllBySearch(cond, member, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
         assertThat(posts.getTotalElements()).isEqualTo(50);
     }
@@ -197,7 +198,7 @@ class PostRepositoryTest {
         cond.setDesiredJob(DesiredJob.Frontend);
         cond.setContent("하세요");
         //when (이런 기능을 동작했을 때)
-        Page<Post> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<PostViewDto> posts = postRepository.findAllBySearch(cond, null, PageRequest.of(0, 16, Sort.by(Sort.Direction.DESC, "createdDate")));
         //then (이런 결과를 확인할 것)
         assertThat(posts.getTotalElements()).isEqualTo(40);
     }
@@ -220,7 +221,7 @@ class PostRepositoryTest {
         //given (주어진 것들을 통해)
         Member member = memberRepository.findById(1L).orElse(Member.noMember());
         //when (이런 기능을 동작했을 때)
-        List<Post> result = postRepository.findAllByCustomDateWithMonth(member,2022,10);
+        List<PostViewDto> result = postRepository.findAllByCustomDateWithMonth(member,2022,10);
         //then (이런 결과를 확인할 것)
         assertThat(result.size()).isEqualTo(100);
     }

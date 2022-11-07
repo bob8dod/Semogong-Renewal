@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import talkwith.semogong.config.PageCond;
 import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.post.PostEditForm;
+import talkwith.semogong.domain.dto.post.PostViewDto;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
 import talkwith.semogong.domain.etc.CustomLocalDate;
@@ -59,11 +60,17 @@ public class PostService {
 
     // member 최근(오늘) 게시글 조회
     @Transactional(readOnly = true)
-    public Optional<Post> findTodayPost(Long memberId) {
+    public Optional<PostViewDto> findTodayPost(Long memberId) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
-            return postRepository.findFirstByMemberAndCustomDate(member, CustomLocalDate.now());
+            Optional<Post> postOptional = postRepository.findFirstByMemberAndCustomDate(member, CustomLocalDate.now());
+            if (postOptional.isPresent()) {
+                PostViewDto postViewDto = new PostViewDto(postOptional.get());
+                return Optional.of(postViewDto);
+            } else {
+                return Optional.empty();
+            }
         } else {
             return Optional.empty();
         }
@@ -83,7 +90,7 @@ public class PostService {
 
     // member 한달 게시글 조회
     @Transactional(readOnly = true)
-    public List<Post> findMonthPost(Long memberId, int year, int month) {
+    public List<PostViewDto> findMonthPost(Long memberId, int year, int month) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
@@ -95,7 +102,8 @@ public class PostService {
 
     // 검색조건에 따른 게시글 조회
     @Transactional(readOnly = true)
-    public Page<Post> findBySearch(SearchCond cond, Member loginMember, int page) {
+    public Page<PostViewDto> findBySearch(SearchCond cond, Member loginMember, int page) {
+        if (!cond.getCategory().equals("my")) { loginMember = null; }
         return postRepository.findAllBySearch(cond, loginMember, PageCond.getPostPageRequest(page));
     }
 

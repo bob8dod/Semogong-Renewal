@@ -3,6 +3,7 @@ package talkwith.semogong.repository.post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
+import talkwith.semogong.domain.dto.post.PostViewDto;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.Post;
 import talkwith.semogong.domain.etc.SearchCond;
@@ -21,12 +22,12 @@ public interface PostRepositoryCustom {
      *  5. 내용 (content)
      * */
     @EntityGraph(attributePaths = {"member"})
-    Page<Post> findAllBySearch(SearchCond cond, Member loginMember, Pageable pageable);
+    Page<PostViewDto> findAllBySearch(SearchCond cond, Member loginMember, Pageable pageable);
 
     /**
      * 지정 달의 글 조회
      * */
     @EntityGraph(attributePaths = {"member"})
-    List<Post> findAllByCustomDateWithMonth(Member member, int year, int month);
+    List<PostViewDto> findAllByCustomDateWithMonth(Member member, int year, int month);
 
 }

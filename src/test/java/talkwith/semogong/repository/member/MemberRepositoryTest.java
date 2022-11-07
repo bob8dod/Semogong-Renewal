@@ -13,6 +13,7 @@ import talkwith.semogong.domain.att.Role;
 import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.member.MemberCreateForm;
 import talkwith.semogong.domain.dto.member.MemberEditForm;
+import talkwith.semogong.domain.dto.member.MemberHomeDto;
 import talkwith.semogong.domain.entity.Follow;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.etc.SearchCond;
@@ -234,7 +235,7 @@ class MemberRepositoryTest {
         followRepository.save(follow3);
 
         //when (이런 기능을 동작했을 때)
-        List<Member> result = memberRepository.findTop5FollowingBySorting(member2.get());
+        List<MemberHomeDto> result = memberRepository.findTop5FollowingBySorting(member2.get());
         //then (이런 결과를 확인할 것)
         assertThat(result.size()).isEqualTo(3);
     }

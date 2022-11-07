@@ -48,6 +48,8 @@ public class Post extends BaseEntity{
     @JoinColumn(name="member_id")
     private Member member;
 
+    private long commentCount;
+
     // 00시~05시 사이에 작성된 글에 대해 처리하기 위한 Field
     private LocalDate customDate;
 
@@ -67,6 +69,7 @@ public class Post extends BaseEntity{
         post.customDate = CustomLocalDate.now();
         post.state = StudyState.STUDYING;
         post.image = new Image("Default", "/images/semogong_light.jpg");
+        post.commentCount = 0;
         return post;
     }
 

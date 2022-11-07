@@ -10,12 +10,15 @@ import talkwith.semogong.domain.att.Goal;
 import talkwith.semogong.domain.att.Image;
 import talkwith.semogong.domain.att.StudyState;
 import talkwith.semogong.domain.dto.member.MemberEditForm;
+import talkwith.semogong.domain.dto.member.MemberHomeDto;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.etc.SearchCond;
 import talkwith.semogong.repository.member.FollowRepository;
 import talkwith.semogong.repository.member.MemberRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,9 +41,17 @@ public class MemberService {
         return memberRepository.findById(id);
     }
 
-    // 전체 회원 조회
+    // 전체 회원 조회 List
     @Transactional(readOnly = true)
-    public Slice<Member> findAll(int page) {
+    public List<MemberHomeDto> findAll() {
+        List<Member> tempAll = memberRepository.findAll();
+        return tempAll.stream().map(MemberHomeDto::new).collect(Collectors.toList());
+    }
+
+
+    // 전체 회원 조회 Paging
+    @Transactional(readOnly = true)
+    public Slice<Member> findAllByPage(int page) {
         PageRequest pageRequest = PageCond.getMemberPageRequest(page);
         return memberRepository.findAllWithSorting(pageRequest);
     }
@@ -70,6 +81,11 @@ public class MemberService {
     public Slice<Member> findAllFollowed(Member member, int page) {
         PageRequest pageRequest = PageCond.getMemberPageRequest(page);
         return memberRepository.findAllFollowed(member, pageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MemberHomeDto> findTop5Following(Member member) {
+        return memberRepository.findTop5FollowingBySorting(member);
     }
 
     // 회원 정보 수정

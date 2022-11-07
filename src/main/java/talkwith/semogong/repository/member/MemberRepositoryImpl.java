@@ -1,6 +1,5 @@
 package talkwith.semogong.repository.member;
 
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -9,15 +8,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import talkwith.semogong.domain.att.DesiredJob;
 import talkwith.semogong.domain.att.StudyState;
+import talkwith.semogong.domain.dto.member.MemberHomeDto;
 import talkwith.semogong.domain.entity.Member;
 import talkwith.semogong.domain.entity.QMember;
 import talkwith.semogong.domain.etc.SearchCond;
 
 import java.util.List;
 
+import static com.querydsl.core.types.Projections.constructor;
 import static org.springframework.util.StringUtils.hasText;
 import static talkwith.semogong.domain.entity.QFollow.follow;
 import static talkwith.semogong.domain.entity.QMember.member;
@@ -111,7 +111,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     /**
      * 3. 이름 (name)
      * 해당 이름을 가진 모든 회원
-     * */
+     */
     private BooleanExpression nameEq(String name) {
         return hasText(name) ? member.name.eq(name) : null;
     }
@@ -119,15 +119,15 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     /**
      * 4. 희망 직무 (desiredJob)
      * 해당 직무를 가진 모든 회원
-     * */
+     */
     private BooleanExpression jobEq(DesiredJob desiredJob) {
         return desiredJob != null ? member.desiredJob.eq(desiredJob) : null;
     }
 
 
     @Override
-    public List<Member> findTop5FollowingBySorting(Member member) {
-        return qm.select(follow.followed)
+    public List<MemberHomeDto> findTop5FollowingBySorting(Member member) {
+        return qm.select(constructor(MemberHomeDto.class, follow.followed))
                 .from(follow)
                 .join(follow.followed, QMember.member)
                 .where(follow.following.eq(member))
